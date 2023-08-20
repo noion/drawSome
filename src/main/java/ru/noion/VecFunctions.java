@@ -4,10 +4,6 @@ import org.graalvm.collections.Pair;
 
 public final class VecFunctions {
 
-    static double length(Vec2 vec) {
-        return Math.sqrt(vec.x() * vec.x() + vec.y() * vec.y());
-    }
-
     static double length(Vec3 vec) {
         return Math.sqrt(vec.x() * vec.x() + vec.y() * vec.y() + vec.z() * vec.z());
     }
