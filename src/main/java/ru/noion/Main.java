@@ -16,12 +16,12 @@ public class Main {
         char[] gradient = {' ', '.', '-', ':', '=', '+', '*', '%', '#', '@'};
         for (int frame = 0; frame < 10000; frame++) {
             var start = System.currentTimeMillis();
-            fillScreen(width, height, ratio, pixelAspect, frame, gradient, screen);
+            drawScene(width, height, ratio, pixelAspect, frame, gradient, screen);
             drawScreen(writer, screen);
             var end = System.currentTimeMillis();
             start = System.currentTimeMillis();
-            if (end - start < 41) {
-                Thread.sleep(41 - (end - start));
+            if (end - start < 10) { // to make it 100 fps
+                Thread.sleep(10 - (end - start));
             }
         }
     }
@@ -32,21 +32,21 @@ public class Main {
         writer.flush();
     }
 
-    private static void fillScreen(int width, int height, double ratio, double pixelAspect, double frame, char[] gradient, char[] screen) {
+    private static void drawScene(int width, int height, double ratio, double pixelAspect, double frame, char[] gradient, char[] screen) {
         for (var i = 0; i < width; i++) {
             for (var j = 0; j < height; j++) {
                 var x = (double) i / width * 2.0 - 1.0;
                 var y = (double) j / height * 2.0 - 1.0;
                 var pixel = ' ';
                 x = x * ratio * pixelAspect;
-                x += Math.sin(frame / 50.0) * 2.0;
-                if (x * x + y * y < 0.02) {
+                x += Math.sin(frame * 0.0025) * 2.0;
+                if (x * x + y * y < 0.01) {
                     pixel = '█';
 //                    pixel = '@';
                 }
                 if (pixel == ' ') {
                     var distance = Math.sqrt(x * x + y * y);
-                    var index = (int) (distance / 4 * gradient.length);
+                    var index = (int) (distance / 2 * gradient.length);
                     if (index >= gradient.length) {
                         index = gradient.length - 1;
                     }
