@@ -17,3 +17,12 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "ru.noion.Main"
+    }
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absolutePath))
+    }
+}
