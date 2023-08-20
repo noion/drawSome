@@ -33,27 +33,32 @@ public class Main {
     }
 
     private static void drawScene(int width, int height, double ratio, double pixelAspect, double frame, char[] gradient, char[] screen) {
+        var light = VecFunctions.normalize(new Vec3(-0.5, 0.5, -1));
+        var sphere = new Vec3(1, 2, 0);
         for (var i = 0; i < width; i++) {
             for (var j = 0; j < height; j++) {
-                var x = (double) i / width * 2.0 - 1.0;
-                var y = (double) j / height * 2.0 - 1.0;
-                var pixel = ' ';
-                x = x * ratio * pixelAspect;
-                x += Math.sin(frame * 0.0025) * 2.0;
-                if (x * x + y * y < 0.01) {
-                    pixel = '█';
-//                    pixel = '@';
+                var uv = new Vec2(i, j).div(new Vec2(width, height)).mul(2.0).sub(1.0);
+                uv = uv.mulX(ratio).mulX(pixelAspect);
+                var ro = new Vec3(-6, 0, 0);
+                var rd = VecFunctions.normalize(new Vec3(2, uv));
+                ro = VecFunctions.rotateY(ro, 0.25);
+                rd = VecFunctions.rotateY(rd, 0.25);
+                ro = VecFunctions.rotateZ(ro, frame * 0.01);
+                rd = VecFunctions.rotateZ(rd, frame * 0.01);
+                var sphereIntersection = VecFunctions.sphereIntersection(ro.sub(sphere), rd, 1);
+                var diff = 1.0;
+                if (sphereIntersection.x() > 0) {
+                    var itPoint = ro.sub(sphere).add(rd.mul(sphereIntersection.x()));
+                    var normal = VecFunctions.normalize(itPoint);
+                    diff = Math.max(0.0, VecFunctions.dot(normal, light));
                 }
-                if (pixel == ' ') {
-                    var distance = Math.sqrt(x * x + y * y);
-                    var index = (int) (distance / 2 * gradient.length);
-                    if (index >= gradient.length) {
-                        index = gradient.length - 1;
-                    }
-                    pixel = gradient[gradient.length - index - 1];
-                }
-                screen[i + j * width] = pixel;
+                var color = (int) (diff * (gradient.length));
+                color = gradient.length - color - 1;
+                color = VecFunctions.clamp(color, 0, gradient.length);
+                var pixel = gradient[color];
+                screen[j * width + i] = pixel;
             }
         }
     }
 }
+//}
