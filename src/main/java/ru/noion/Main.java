@@ -34,7 +34,8 @@ public class Main {
 
     private static void drawScene(int width, int height, double ratio, double pixelAspect, double frame, char[] gradient, char[] screen) {
         var light = VecFunctions.normalize(new Vec3(-0.5, 0.5, -1));
-        var spherePos = new Vec3(6, 0, 0);
+        var spherePos = new Vec3(6, 2, 0);
+        var boxPosition = new Vec3(0, -2, -1);
         for (var i = 0; i < width; i++) {
             for (var j = 0; j < height; j++) {
                 var uv = new Vec2(i, j).div(new Vec2(width, height)).mul(2.0).sub(1.0);
@@ -46,7 +47,7 @@ public class Main {
                 ro = VecFunctions.rotateZ(ro, frame * 0.01);
                 rd = VecFunctions.rotateZ(rd, frame * 0.01);
                 var diff = 1.0;
-                for (int k = 0; k < 30; k++) {
+                for (int k = 0; k < 10; k++) {
                     var minIt = 99999.0;
                     var intersection = VecFunctions.sphereIntersection(ro.sub(spherePos), rd, 2 );
                     var normal = new Vec3(0, 0, 0);
@@ -56,13 +57,13 @@ public class Main {
                         normal = VecFunctions.normalize(itPoint);
                         minIt = intersection.x();
                     }
-                    var boxIntersection = VecFunctions.boxIntersection(ro, rd, new Vec3(1, 1, 1), new Vec3(0, 0, 0));
+                    var boxIntersection = VecFunctions.boxIntersection(ro.sub(boxPosition), rd, new Vec3(2, 2, 2), new Vec3(0, 0, 0));
                     intersection = boxIntersection.getLeft();
                     if (intersection.x() > 0 && intersection.x() < minIt) {
                         normal = boxIntersection.getRight();
                         minIt = intersection.x();
                     }
-                    var plane = VecFunctions.plane(ro, rd, new Vec3(0, 0, -1), 3);
+                    var plane = VecFunctions.plane(ro, rd, new Vec3(0, 0, -1), 4);
                     intersection = new Vec2(plane, plane);
                     if (intersection.x() > 0 && intersection.x() < minIt) {
                         normal = new Vec3(0, 0, -1);
